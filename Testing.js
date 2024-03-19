@@ -2,16 +2,31 @@ const ProductManager = require("./productManager")
 
 const producto = new ProductManager();
 
-//console.log(producto.getProducts());
-//console.log(producto.getProductsById(1));
-console.log(producto.addProduct('Moto xz', '4gb + 500 gb', 500 ,'img1','4532gb',5));
-console.log(producto.addProduct('Moto z3', '4gb + 500 gb', 500 ,'img1','4532lb',5));
-console.log(producto.addProduct('Moto z3', '4gb + 500 gb', 500 ,'img1','4532xq',5));
-console.log(producto.addProduct('Moto z3', '4gb + 500 gb', 500 ,'img1','4534Ls',5));
-console.log(producto.getProductsById(20240003));
+
+//console.log(producto.addProduct("Motorola","hnjmknjmk",500,"img/http.img","4542",5))
+//console.log(producto.addProduct("Iphone","hnjmknjmk",300,"img/http.img","44332",5))
+//console.log(producto.addProduct("redbla1","hnjmknjmk",300,"img/http.img","42kfdd2",5))
+//
+//console.log(producto.addProduct("nuevo", "hnjmknjmk", 300, "img/http.img", "42kxx2", 5))
+
+//console.log(producto.getProductsById)
+
+//console.log(producto.deleteProduct(2024002))
+//console.log(producto.updateProduct(2024001))
+
+const productoNuevo = {
+
+    "id" : 2024001888888383838,
+    "title" : "IphoneNuevoXR",
+    "description" : "dfrtgyhujdrftgy",
+    "price" : 10000,
+    
+
+
+}
 
 
 
+console.log(producto.updateProduct(2024001, productoNuevo))
 
-console.log(producto.getProducts());
 
