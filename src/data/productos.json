@@ -1,0 +1,47 @@
+[
+    {
+        "id": 2024000,
+        "title": "Motorola",
+        "description": "hnjmknjmk",
+        "price": 500,
+        "thumbnail": "img/http.img",
+        "code": "4542",
+        "stock": 5
+    },
+    {
+        "id": 2024004,
+        "title": "redbla1",
+        "description": "hnjmknjmk",
+        "price": 300,
+        "thumbnail": "img/http.img",
+        "code": "42kfdd2",
+        "stock": 5
+    },
+    {
+        "id": 20245555005,
+        "title": "Motorola",
+        "description": "hnjmknjmk",
+        "price": 500,
+        "thumbnail": "img/http.img",
+        "code": "4542**",
+        "stock": 5
+    },
+    {
+        "id": 2024222005,
+        "title": "Motorola",
+        "description": "hnjmknjmk",
+        "price": 500,
+        "thumbnail": "img/http.img",
+        "code": "4542**",
+        "stock": 5
+    },
+    {
+        "id": 2024005235,
+        "title": "Motorola",
+        "description": "hnjmknjmk",
+        "price": 500,
+        "thumbnail": "img/http.img",
+        "code": "4542**",
+        "stock": 5
+    }
+]
