@@ -46,21 +46,24 @@ class ProductManager {
     }
 
     addProduct(title, description, price, thumbnail, code, stock) {
-
-        if (!title || !description || !price || !thumbnail || !code || !stock)
-            return "todos los campos son obligatorios";
-
+        // Verifica si algún campo obligatorio está faltando
+        if (!title || !description || !price || !thumbnail || !code || !stock) {
+            return "Todos los campos son obligatorios";
+        }
+    
+        // Verifica si el código ya está en uso
         const isInProducts = this.products.some(item => item.code == code);
-        if (isInProducts)
-            return "el codigo ya se encuentra registrado"
-
-        ProductManager.idProducto = ProductManager.idProducto + 1
-
+        if (isInProducts) {
+            return "El código ya se encuentra registrado";
+        }
+    
+        // Incrementa el contador de ID
+        ProductManager.idProducto++;
+    
+        // Asigna un nuevo ID al producto
         const id = this.asignarId();
-
-
-
-
+    
+        // Crea un nuevo objeto para el producto
         const nuevoProducto = {
             id,
             title,
@@ -70,13 +73,15 @@ class ProductManager {
             code,
             stock
         };
-
+    
+        // Agrega el nuevo producto al array de productos
         this.products.push(nuevoProducto);
+    
+        // Guarda los cambios en el archivo
         this.guardarArchivo();
-
-        return "Producto agregado correctamente"
-
-
+    
+        // Retorna un mensaje de éxito
+        return "Producto agregado correctamente";
     }
 
     getProducts() {
