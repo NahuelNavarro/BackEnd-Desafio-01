@@ -10,7 +10,6 @@ class ProductManager {
     constructor() {
         this.path = './src/data/productos.json';
         this.products = this.leerProductosInFile();
-
     }
 
     //Metodos
@@ -30,83 +29,82 @@ class ProductManager {
 
     guardarArchivo() {
         try {
-            fs.writeFileSync(this.path, JSON.stringify(this.products)) // paso un objeto a texto para guardarlo en el JSON
+            fs.writeFileSync(this.path,JSON.stringify(this.products)) // paso un objeto a texto para guardarlo en el JSON
         } catch (error) {
             console.log(`el error es el siguiente, ${error}`)
-
         }
-
     }
 
     asignarId() {
-        let id = 2024000;
+        let id = 0;
         if (this.products.length != 0)
             id = this.products[this.products.length - 1].id + 1;
         return id
     }
 
-    addProduct(title, description, price, thumbnail, code, stock) {
+    addProduct(title, description, price) {
         // Verifica si algún campo obligatorio está faltando
-        if (!title || !description || !price || !thumbnail || !code || !stock) {
+        if (!title || !description || !price ) {
             return "Todos los campos son obligatorios";
         }
-    
+
         // Verifica si el código ya está en uso
         const isInProducts = this.products.some(item => item.code == code);
         if (isInProducts) {
             return "El código ya se encuentra registrado";
         }
-    
+
         // Incrementa el contador de ID
         ProductManager.idProducto++;
-    
+
         // Asigna un nuevo ID al producto
         const id = this.asignarId();
-    
+
         // Crea un nuevo objeto para el producto
         const nuevoProducto = {
             id,
             title,
             description,
             price,
-            thumbnail,
-            code,
-            stock
+            
         };
-    
+
         // Agrega el nuevo producto al array de productos
         this.products.push(nuevoProducto);
-    
+
         // Guarda los cambios en el archivo
         this.guardarArchivo();
-    
+
         // Retorna un mensaje de éxito
         return "Producto agregado correctamente";
     }
 
     getProducts() {
         return this.products;
-
     }
 
     //busco el producto por id
     getProductsById(id) {
+        let status = false
+        let resp = `el producto con el id ${id} no existe`
         let isItemFound = this.products.find(item => item.id == id);
-        if (isItemFound) return isItemFound
-        else
-            return "not found"
-
+        if (isItemFound) {
+            status = true;
+            resp = isItemFound
+        }
+        return {status,resp}
     }
 
-    updateProduct(id,objetUpdate) {
+    updateProduct(id, objetUpdate) {
         const index = this.products.findIndex(item => item.id == id)
-        if (index !== -1){// -1 indica que no esta el elemento item, da -1 cuando no encuentra el elemento
-            const {id, ...rest} = objetUpdate
-            this.products[index] = {...this.products[index], ...rest}
-            console.log("producto modificado")
+        if (index !== -1) {// -1 indica que no esta el elemento item, da -1 cuando no encuentra el elemento
+            const { id, ...rest } = objetUpdate
+            this.products[index] = { ...this.products[index], ...rest }
             this.guardarArchivo();
+            return "producto modificado"
+        } else {
+            return "elemento no encontrado"
         }
-
     }
 
     deleteProduct(id) {
@@ -117,14 +115,13 @@ class ProductManager {
         if (isIdFound) {
             deleteItem
             this.guardarArchivo();
-            console.log('eliminado')
+            return 'eliminado'
+        } else {
+            return "no se encuentra el producto que quiere eliminar"
         }
-
-
     }
 
 }
-
 
 //module.exports = ProductManager;
 

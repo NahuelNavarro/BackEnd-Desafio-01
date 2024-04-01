@@ -7,9 +7,9 @@ const products = new ProductManager()
 const productos = products.getProducts()
 
 
-
 //busco una cantidad de resultados con REQ.QUERY.
 router.get('/', (req, res) => {
+
     const limit = req.query.limit;
     if (limit) { //si le paso un valor haceme lo de abajo, sino mostrame todos los productos
         const cantidadLimite = parseInt(limit); //lo convierte a numero 
@@ -22,18 +22,32 @@ router.get('/', (req, res) => {
 
 //busco mi producto por el ID con REQ PARAMS
 router.get('/:pid', (req, res) => {
-    const idProducto = req.params.pid;
-    let producto = productos.find(item => item.id == idProducto)
-    console.log(producto)
-    if (!producto) return res.send({ error: "producto no encontrado" })
-    res.send({ producto })
+
+    const { pid: id } = req.params; // Aquí se utiliza desestructuración
+    const productoId = products.getProductsById(id);
+    console.log(productoId);
+    res.send({ productoId });
 })
 
 
 router.post('/', (req, res) => {
-    const { title, description, price, thumbnail, code, stock } = req.body
-    const p = new ProductManager()
-    const result = p.addProduct(title, description, price, thumbnail, code, stock)
-    return res.json(products.addProduct({ result }))
 
+    const { title, description, price, thumbnail, code, stock, status = true, category } = req.body
+    const agregarProducto = products.addProduct(title, description, price, thumbnail, code, stock, status = true, category)
+    return res.json({ agregarProducto })
+
+})
+
+router.put('/:pid', (req, res) => {
+
+    const { pid: id } = req.params
+    const modificarProducto = products.updateProduct(id, req.body)
+    return res.json({ modificarProducto })
+})
+
+router.delete('/:pid', (req, res) => {
+    
+    const { pid: id } = req.params
+    const productoEliminado = products.deleteProduct(id)
+    return res.json({ productoEliminado })
 })
