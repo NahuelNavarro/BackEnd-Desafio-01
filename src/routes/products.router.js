@@ -31,12 +31,15 @@ router.get('/:pid', (req, res) => {
 
 
 router.post('/', (req, res) => {
+    try {
+        const { title, description, price, thumbnail, code, stock, status = true, category } = req.body;
+        const agregarProducto = products.addProduct(title, description, price, thumbnail, code, stock, status, category);
+        return res.json({ agregarProducto });
 
-    const { title, description, price, thumbnail, code, stock, status = true, category } = req.body
-    const agregarProducto = products.addProduct(title, description, price, thumbnail, code, stock, status = true, category)
-    return res.json({ agregarProducto })
-
-})
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
+});
 
 router.put('/:pid', (req, res) => {
 

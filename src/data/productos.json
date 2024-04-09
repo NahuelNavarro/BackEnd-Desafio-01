@@ -1,14 +1,1 @@
-[
-    {
-        "id": 0,
-        "title": "pancho",
-        "description": "blabla",
-        "price": 500
-    },
-    {
-        "id": 1,
-        "title": "comida",
-        "description": "blabla",
-        "price": 400
-    }
-]
+[{"id":1,"title":"bananas","description":"las bananas son ricas","price":"300","code":"tghyuj5","stock":8,"status":"false","category":"fruta"}]

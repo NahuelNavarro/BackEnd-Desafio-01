@@ -42,23 +42,22 @@ class ProductManager {
         return id
     }
 
-    addProduct(title, description, price) {
+    addProduct(title, description, price, thumbnail, code, stock, status = true, category ) {
         // Verifica si algún campo obligatorio está faltando
-        if (!title || !description || !price ) {
-            return "Todos los campos son obligatorios";
+        if (!title || !description || !price || !code || !stock || !status || !category) {
+            throw new Error("Todos los campos son obligatorios");
         }
 
         // Verifica si el código ya está en uso
         const isInProducts = this.products.some(item => item.code == code);
         if (isInProducts) {
-            return "El código ya se encuentra registrado";
+            throw new Error("El código ya se encuentra registrado");
         }
 
         // Incrementa el contador de ID
-        ProductManager.idProducto++;
-
         // Asigna un nuevo ID al producto
-        const id = this.asignarId();
+        const id = ++ProductManager.idProducto;
+
 
         // Crea un nuevo objeto para el producto
         const nuevoProducto = {
@@ -66,7 +65,12 @@ class ProductManager {
             title,
             description,
             price,
-            
+            thumbnail,
+            code,
+            stock,
+            status,
+            category
+
         };
 
         // Agrega el nuevo producto al array de productos
