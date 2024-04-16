@@ -32,8 +32,7 @@ router.get('/:pid', (req, res) => {
 
 router.post('/', (req, res) => {
     try {
-        const { title, description, price, thumbnail, code, stock, status = true, category } = req.body;
-        const agregarProducto = products.addProduct(title, description, price, thumbnail, code, stock, status, category);
+        const agregarProducto = products.addProduct({...req.body});
         return res.json({ agregarProducto });
 
     } catch (error) {
