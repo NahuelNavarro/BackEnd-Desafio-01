@@ -12,3 +12,8 @@ router.get('/realtimeproducts', (req, res) => {
     res.setHeader('Content-Type', 'text/html')
     res.status(200).render('realtimeproducts')
 })
+
+router.get('/chat', (req, res) => {
+    res.setHeader('Content-Type', 'text/html')
+    res.status(200).render('chat')
+})

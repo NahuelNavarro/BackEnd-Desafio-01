@@ -10,6 +10,7 @@ import __dirname from './utils.js'
 import ProductManager from './dao/ProductManager.js'
 import { dbConnection } from './database/config.js'
 import { productModel } from './data/models/products.js'
+import { messageModel } from './data/models/messages.js'
 
 const app = express()
 
@@ -50,4 +51,17 @@ io.on('connection', async (socket) => {
         }
         socket.emit('productos', productos)
     })
+    const message = await messageModel.find()
+    socket.emit('message', message)
+
+    socket.on('message', async (data) =>{
+        const newMessage = await messageModel.create({...data});
+        if(newMessage){
+            const messages = await messageModel.find()
+            io.emit('messageLogs', messages)
+        }
+    });
+
+    socket.broadcast.emit ('nuevo_user')
+    
 })

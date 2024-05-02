@@ -1,10 +1,10 @@
-import { Schema,model } from "Message";
+import { Schema, model } from "mongoose";
 
-const nameCollection = 'Cart'
+const nameCollection = 'Message'
 
 const MessageShema = new Schema ({
     user:{type: String, required:[true,'El nombre del usuario es obligatorio']},
     message:{type: String, required:[true,'El mensaje es obligatorio']}
 });
 
-export const messageModel = model(nameCollection, ProductoShema);
+export const messageModel = model(nameCollection, MessageShema);
