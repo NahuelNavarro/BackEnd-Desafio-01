@@ -1,55 +1,14 @@
 import { Router } from "express";
+import { addProduct, deleteProduct, getProducts, getProductsById, updateProduct } from "../controllers/products.js";
 export const router = Router();
-import ProductManager from '../dao/ProductManager.js';
+//import ProductManager from '../dao/ProductManager.js';
 
+router.get('/', getProducts);
 
-const products = new ProductManager()
-const productos = products.getProducts()
+router.get('/:pid', getProductsById)
 
+router.post('/', addProduct);
 
-//busco una cantidad de resultados con REQ.QUERY.
-router.get('/', (req, res) => {
+router.put('/:pid', updateProduct)
 
-    const limit = req.query.limit;
-    if (limit) { //si le paso un valor haceme lo de abajo, sino mostrame todos los productos
-        const cantidadLimite = parseInt(limit); //lo convierte a numero 
-        const datosLimitados = productos.slice(0, cantidadLimite);// slice lo uso para extraer numeros desde un unicio hasta una posicion del array final arr.slice([inicio [, fin]])
-        res.send({ datosLimitados });
-    } else {
-        res.send({ productos });
-    }
-});
-
-//busco mi producto por el ID con REQ PARAMS
-router.get('/:pid', (req, res) => {
-
-    const { pid: id } = req.params; // Aquí se utiliza desestructuración
-    const productoId = products.getProductsById(id);
-    console.log(productoId);
-    res.send({ productoId });
-})
-
-
-router.post('/', (req, res) => {
-    try {
-        const agregarProducto = products.addProduct({...req.body});
-        return res.json({ agregarProducto });
-
-    } catch (error) {
-        return res.status(400).json({ error: error.message });
-    }
-});
-
-router.put('/:pid', (req, res) => {
-
-    const { pid: id } = req.params
-    const modificarProducto = products.updateProduct(id, req.body)
-    return res.json({ modificarProducto })
-})
-
-router.delete('/:pid', (req, res) => {
-    
-    const { pid: id } = req.params
-    const productoEliminado = products.deleteProduct(id)
-    return res.json({ productoEliminado })
-})
+router.delete('/:pid', deleteProduct)

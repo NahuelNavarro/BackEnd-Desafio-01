@@ -8,6 +8,8 @@ import { Server, Socket } from 'socket.io'
 import { engine } from 'express-handlebars'
 import __dirname from './utils.js'
 import ProductManager from './dao/ProductManager.js'
+import { dbConnection } from './database/config.js'
+import { productModel } from './data/models/products.js'
 
 const app = express()
 
@@ -28,20 +30,24 @@ app.use('/', vistasRouter)
 app.use("/api/productos", productosRouter)
 app.use("/api/carts", cartsRouter)
 
+await dbConnection();
 
 const p = new ProductManager()
 
 const expressServer = app.listen(8080, () => console.log("Servido 8080 iniciado"));
 
-const socketServer = new Server(expressServer)
-socketServer.on('connection',socket=>{
+const io = new Server(expressServer)
+io.on('connection', async (socket) => {
 
-    const productos = p.getProducts();
-    socket.emit('productos',productos)
+    //const productos = p.getProducts();
+    const productos = await productModel.find()
+    socket.emit('productos', productos)
 
-    socket.on('agregarProducto', nuevoProducto=>{
-        console.log({nuevoProducto})
-        const result = p.addProduct({...nuevoProducto});
-        console.log({result})
+    socket.on('agregarProducto', async (nuevoProducto) => {
+        const newProduct =  await productModel.create({...nuevoProducto})
+        if(newProduct){
+            productos.push(newProduct)
+        }
+        socket.emit('productos', productos)
     })
 })

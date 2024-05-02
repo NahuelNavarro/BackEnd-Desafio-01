@@ -1,10 +1,9 @@
 import { Router } from "express";
-import ProductManager from "../dao/ProductManager.js";
+import { productModel } from "../data/models/products.js";
 export const router = Router()
 
-router.get('/', (req, res) => {
-    const p = new ProductManager();
-    const productos = p.getProducts();
+router.get('/', async (req, res) => {
+    const productos = await productModel.find().lean();
     res.setHeader('Content-Type', 'text/html')
     res.status(200).render('home', { productos })
 })
