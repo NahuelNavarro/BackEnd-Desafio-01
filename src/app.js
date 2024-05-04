@@ -1,67 +1,80 @@
-//const express = require('express');
-import express from 'express'
-//const ProductManager = require('./classes/ProductManager')
-import { router as productosRouter } from './routes/products.router.js'
-import { router as cartsRouter } from './routes/cart.router.js'
-import { router as vistasRouter } from './routes/views.router.js'
-import { Server, Socket } from 'socket.io'
-import { engine } from 'express-handlebars'
-import __dirname from './utils.js'
-import ProductManager from './dao/ProductManager.js'
-import { dbConnection } from './database/config.js'
-import { productModel } from './data/models/products.js'
-import { messageModel } from './data/models/messages.js'
+// Importa los módulos necesarios
+import express from 'express';
+import { Server } from 'socket.io';
+import { engine } from 'express-handlebars';
+import { dbConnection } from './database/config.js';
+import { productModel } from './data/models/products.js';
+import { messageModel } from './data/models/messages.js';
+import { router as productosRouter } from './routes/products.router.js';
+import { router as cartsRouter } from './routes/cart.router.js';
+import { router as vistasRouter } from './routes/views.router.js';
+import __dirname from './utils.js';
 
-const app = express()
+// Crea una instancia de la aplicación Express
+const app = express();
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(express.static(__dirname + '/public'));
-
-
-//handlebars
+// Configura el motor de plantillas Handlebars
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', __dirname + '/views');
-app.use('/', vistasRouter)
 
-//socket.io
+// Configura el middleware para procesar datos JSON y formularios
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// Configura el middleware para servir archivos estáticos
+app.use(express.static(__dirname + '/public'));
 
-app.use("/api/productos", productosRouter)
-app.use("/api/carts", cartsRouter)
+// Rutas de las vistas
+app.use('/', vistasRouter);
 
+// Rutas de la API
+app.use("/api/productos", productosRouter);
+app.use("/api/carts", cartsRouter);
+
+// Conexión a la base de datos MongoDB
 await dbConnection();
 
-const p = new ProductManager()
+// Inicia el servidor Express en el puerto 8080
+const expressServer = app.listen(8080, () => {
+    console.log("Servidor 8080 iniciado");
+});
 
-const expressServer = app.listen(8080, () => console.log("Servido 8080 iniciado"));
+// Inicializa Socket.io en el servidor Express
+const io = new Server(expressServer);
 
-const io = new Server(expressServer)
+// Maneja la conexión de nuevos clientes
 io.on('connection', async (socket) => {
+    // Envía los productos existentes al cliente recién conectado
+    const productos = await productModel.find();
+    socket.emit('productos', productos);
 
-    //const productos = p.getProducts();
-    const productos = await productModel.find()
-    socket.emit('productos', productos)
+    // Envía los mensajes existentes al cliente recién conectado
+    const messages = await messageModel.find();
+    socket.emit('messageLogs', messages);
 
+    // Maneja el evento 'agregarProducto'
     socket.on('agregarProducto', async (nuevoProducto) => {
-        const newProduct =  await productModel.create({...nuevoProducto})
+        const newProduct = await productModel.create({...nuevoProducto});
         if(newProduct){
-            productos.push(newProduct)
-        }
-        socket.emit('productos', productos)
-    })
-    const message = await messageModel.find()
-    socket.emit('message', message)
-
-    socket.on('message', async (data) =>{
-        const newMessage = await messageModel.create({...data});
-        if(newMessage){
-            const messages = await messageModel.find()
-            io.emit('messageLogs', messages)
+            productos.push(newProduct);
+            // Emite los productos actualizados a todos los clientes
+            io.emit('productos', productos);
         }
     });
 
-    socket.broadcast.emit ('nuevo_user')
-    
-})
+    // Maneja el evento 'message'
+    socket.on('message', async (data) => {
+        const newMessage = await messageModel.create({...data});
+        if(newMessage){
+            const messages = await messageModel.find();
+            // Emite los mensajes actualizados a todos los clientes
+            io.emit('messageLogs', messages);
+        }
+    });
+
+    // Emitir evento 'nuevo_user' para notificar a todos los clientes cuando se conecta un nuevo usuario
+    socket.broadcast.emit('nuevo_user');
+});
+
+

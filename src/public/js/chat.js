@@ -1,5 +1,3 @@
-import Swal from "sweetalert2";
-
 const socket = io();
 let user;
 let chatBox = document.getElementById('chatBox');
@@ -8,68 +6,48 @@ let data;
 
 socket.on('message', msg =>{
     data = msg;
-})
+});
 
 socket.on('messageLogs', msg =>{
-    renderizar(msg)
-})
+    renderizar(msg);
+});
 
 const renderizar = (msg) =>{
     let messages = '';
     msg.forEach(message => {
-        const isCurrentUser = message.user == user;
-        const messageClass = isCurrentUser? 'my-message' : 'other-message'
-        messages = messages + `<div class="${messageClass}">${message.user}: ${message.message}</div>`
+        const isCurrentUser = message.user === user; // Corregir el operador de comparación
+        const messageClass = isCurrentUser ? 'my-message' : 'other-message';
+        messages += `<div class="${messageClass}">${message.user}: ${message.message}</div>`;
     });
 
     log.innerHTML = messages;
-    chatBox.scrollIntoView(false)
-}
+    chatBox.scrollIntoView(false);
+};
 
 document.addEventListener("DOMContentLoaded", function() {
-    Swal.fire({
-        title: "Identifícate",
-        input: "email",
-        text: "Ingresa tu correo",
-        inputValidator: (value) => {
-          if (!value)
-            return 'Necesitas ingresar un correo';
-
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(value))
-            return 'Ingresa correctamente';
-
-          return null;
-        },
-        allowOutsideClick: false
-    }).then(result => {
-        if (result.isConfirmed) {
-            const userEmail = result.value;
-            user = userEmail; // Asignar el correo electrónico ingresado a la variable user
-            renderizar(data); // Renderizar con la data existente
-        }
-    });
+    const userEmail = prompt("Identifícate\nIngresa tu correo:");
+    if (userEmail) {
+        user = userEmail;
+        // Emitir un evento para solicitar los mensajes antiguos cuando se abre un nuevo chat
+        socket.emit('getOldMessages');
+    }
 });
 
-
-
-
-  chatBox.addEventListener('keyup', evt=>{
+chatBox.addEventListener('keyup', evt=>{
     if(evt.key === 'Enter'){
         if(chatBox.value.trim().length > 0){
             const message = chatBox.value;
-            socket.emit('message',{user, message});
-            chatBox.value = ''
+            socket.emit('message', {user, message});
+            chatBox.value = '';
         }
     }
-  })
+});
 
- socket.on('nuevo_user',() =>{
-    Swal.fire({
-        text:'Nuevo usuario conectado',
-        toast: true,
-        position: 'top-right'
-    })
- })
+socket.on('nuevo_user',() =>{
+    alert('Nuevo usuario conectado');
+});
 
- 
+// Escuchar el evento para recibir mensajes antiguos
+socket.on('oldMessages', (msg) => {
+    renderizar(msg);
+});
