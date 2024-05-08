@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addProduct, deleteProduct, getProducts, getProductsById, updateProduct } from "../controllers/products.js";
+import { addProduct, deleteProduct, getProducts, getProductsById, updateProduct} from "../controllers/products.js";
 export const router = Router();
 //import ProductManager from '../dao/ProductManager.js';
 
