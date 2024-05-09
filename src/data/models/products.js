@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import paginate  from "mongoose-paginate-v2";
+import paginate from "mongoose-paginate-v2";
 import mongoose from "mongoose";
 
 
@@ -12,7 +12,7 @@ const ProductShema = new Schema({
     stock: { type: Number, required: [true, 'El stock del producto es obligatorio'] },
     category: { type: String, required: [true, 'El category del producto es obligatorio'] },
     status: { type: Boolean, default: true }
-},{collection:'productos'});
+}, { collection: 'productos' });
 
 ProductShema.plugin(paginate)
 

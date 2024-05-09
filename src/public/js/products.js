@@ -1,4 +1,17 @@
+const comprar = async (pid) => {
+    let inPutCarrito = document.getElementById("carrito")
+    let cid = inPutCarrito.value
+    console.log(`codigo producto ${pid}, codigo carrito ${cid}`)
+
+    let res = await fetch (`/api/carts/${cid}/product/${pid}`,{method:"post"})
+    if(res.status == 200 ){
+        let datos = await res.json()
+        console.log(datos)
+    }
+}
+
 const socket = io();
+
 
 socket.on('productos', productos => {
     const tbody = document.getElementById('productos-body')
@@ -38,3 +51,4 @@ formulario.addEventListener('submit', function (event) {
     socket.emit('agregarProducto',nuevoProducto)
 }
 )
+

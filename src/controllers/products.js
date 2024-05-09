@@ -1,6 +1,7 @@
 import { request, response } from "express";
 import { productModel } from "../data/models/products.js";
 
+// Obtener lista de productos con paginación, filtrado y ordenamiento
 export const getProducts = async (req = request, res = response) => {
     try {
         // Parámetros de consulta
@@ -18,11 +19,7 @@ export const getProducts = async (req = request, res = response) => {
         // Ordenamiento
         const sortOptions = {};
         if (sort) {
-            if (sort === "asc") {
-                sortOptions.price = 1;
-            } else if (sort === "desc") {
-                sortOptions.price = -1;
-            }
+            sortOptions.price = sort === "asc" ? 1 : sort === "desc" ? -1 : 0;
         }
 
         // Consulta para contar total de documentos
@@ -58,57 +55,70 @@ export const getProducts = async (req = request, res = response) => {
         });
 
     } catch (error) {
-        console.log('getProducts => ', error);
-        return res.status(500).json({ msg: 'Hablar con el admin' });
+        console.error('Error en getProducts:', error);
+        return res.status(500).json({ msg: 'Ocurrió un error, contacta al administrador.' });
     }
-}
+}//ok
 
+// Obtener un producto por su ID
 export const getProductsById = async (req = request, res = response) => {
     try {
-        const {pid} = req.params
-        const producto = await productModel.findById(pid)
-        if(!producto)
-            return res.status(404).json({msg:`El producto con id ${pid} no existe`})
-        return res.json({producto})
+        const { pid } = req.params;
+        const producto = await productModel.findById(pid);
+        if (!producto)
+            return res.status(404).json({ msg: `El producto con ID ${pid} no existe.` });
+        return res.json({ producto });
 
     } catch (error) {
-        console.log('getProductsById => ', error)
-        return res.status(500).json({msg:'Hablar con el admin'})
+        console.error('Error en getProductsById:', error);
+        return res.status(500).json({ msg: 'Ocurrió un error, contacta al administrador.' });
     }
-}
+}//ok
 
+// Añadir un nuevo producto
 export const addProduct = async (req = request, res = response) => {
     try {
-        const {title,description,price,thumbnail,code,stock,category,status} = req.body;
-        if(!title, !description, !code,!price,!stock,!category)
-        return res.status(404).json({msg: `los campos title, !description, !code,!price,!stock,!category son obligatorios `})
-        const producto = await productModel.create({title,description,price,thumbnail,code,stock,category,status})
-    } catch (error) {
-        console.log('addProduct => ', error)
-        return res.status(500).json({msg:'Hablar con el admin'})
-    }
-}
+        const { title, description, price, thumbnail, code, stock, category, status } = req.body;
+        if (!title || !description || !price || !stock || !category || !code)
+            return res.status(400).json({ msg: 'Los campos title, description, price, stock, category y code son obligatorios.' });
 
+        const producto = await productModel.create({ title, description, price, thumbnail, code, stock, category, status });
+        return res.status(201).json({ msg: 'Producto añadido correctamente.', producto });
+
+    } catch (error) {
+        console.error('Error en addProduct:', error);
+        return res.status(500).json({ msg: 'Ocurrió un error, contacta al administrador.' });
+    }
+}//ok
+
+// Actualizar un producto por su ID
 export const updateProduct = async (req = request, res = response) => {
     try {
-        const {pid} = req.params
-        const {_id, ...rest} = req.body;
-        const producto = await productModel.findByIdAndUpdate(pid,{...rest},{new: true})
-        producto? res.json({msg:`Producto actualizado`, producto}) : res.status(400).json({msg:`no se encontro el producto con el ${pid}`})
+        const { pid } = req.params;
+        const producto = await productModel.findByIdAndUpdate(pid, req.body, { new: true });
+        if (!producto)
+            return res.status(404).json({ msg: `No se encontró el producto con el ID ${pid}.` });
+
+        return res.json({ msg: 'Producto actualizado.', producto });
+
     } catch (error) {
-        console.log('updateProduct => ', error)
-        return res.status(500).json({msg:'Hablar con el admin'})
+        console.error('Error en updateProduct:', error);
+        return res.status(500).json({ msg: 'Ocurrió un error, contacta al administrador.' });
     }
 }
 
+// Eliminar un producto por su ID
 export const deleteProduct = async (req = request, res = response) => {
     try {
-        const {pid} = req.params
-        const producto = await productModel.findOneAndDelete(pid)
-        producto? res.json({msg:`Producto eliminado`, producto}) : res.status(400).json({msg:`no se encontro el producto con el ${pid}`})
+        const { pid } = req.params;
+        const producto = await productModel.findOneAndDelete({ _id: pid });
+        if (!producto)
+            return res.status(404).json({ msg: `No se encontró el producto con el ID ${pid}.` });
+
+        return res.json({ msg: 'Producto eliminado.', producto });
+
     } catch (error) {
-        console.log('deleteProduct => ', error)
-        return res.status(500).json({msg:'Hablar con el admin'})
+        console.error('Error en deleteProduct:', error);
+        return res.status(500).json({ msg: 'Ocurrió un error, contacta al administrador.' });
     }
 }
-
