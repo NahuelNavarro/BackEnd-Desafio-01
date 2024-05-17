@@ -9,6 +9,8 @@ import { router as productosRouter } from './routes/products.router.js';
 import { router as cartsRouter } from './routes/cart.router.js';
 import { router as vistasRouter } from './routes/views.router.js';
 import __dirname from './utils.js';
+import session from 'express-session';
+import { router as sessionRouter } from './routes/session.router.js';
 
 // Crea una instancia de la aplicación Express
 const app = express();
@@ -17,6 +19,9 @@ const app = express();
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', __dirname + '/views');
+app.use(session({
+    secret:"CoderCoder123", resave: true, saveUninitialized: true
+}))
 
 // Configura el middleware para procesar datos JSON y formularios
 app.use(express.json());
@@ -27,10 +32,14 @@ app.use(express.static(__dirname + '/public'));
 
 // Rutas de las vistas
 app.use('/', vistasRouter);
+app.use('/api/session', sessionRouter)
 
 // Rutas de la API
 app.use("/api/productos", productosRouter);
 app.use("/api/carts", cartsRouter);
+
+
+
 
 // Conexión a la base de datos MongoDB
 await dbConnection();

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { productModel } from "../data/models/products.js";
 import { ManagerMongo } from "../dao/ProductManagerMongo.js";
+import { auth } from "../middleware/auth.js";
 export const router = Router()
 
 router.get('/', async (req, res) => {
@@ -29,4 +30,18 @@ router.get('/products', async (req, res) => {
     console.log(productos)
     res.setHeader('Content-Type', 'text/html')
     res.status(200).render('products',{productos,totalPages,hasPrevPage,hasNextPage,prevPage,nextPage})
+})
+
+router.get('/login',(req , res)=>{
+    res.status(200).render('login')
+})
+
+router.get('/registro',(req , res)=>{
+    res.status(200).render('register')
+})
+
+router.get('/profile', auth, (req , res)=>{
+    res.status(200).render('profile',{
+        usuario:req.session.usuario
+    })
 })
