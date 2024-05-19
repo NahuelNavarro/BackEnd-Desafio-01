@@ -7,7 +7,7 @@ export const router = Router()
 router.get('/', async (req, res) => {
     const productos = await productModel.find().lean();
     res.setHeader('Content-Type', 'text/html')
-    res.status(200).render('home', { productos })
+    res.status(200).render('products', { productos })
 })
 
 router.get('/realtimeproducts', (req, res) => {
@@ -33,7 +33,8 @@ router.get('/products', async (req, res) => {
 })
 
 router.get('/login',(req , res)=>{
-    res.status(200).render('login')
+    let {error} = req.query
+    res.status(200).render('login', {error})
 })
 
 router.get('/registro',(req , res)=>{
