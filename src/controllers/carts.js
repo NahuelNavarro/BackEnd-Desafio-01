@@ -1,10 +1,14 @@
 import { request, response } from "express";
 import { cartModel } from "../data/models/carts.js";
 import { productModel } from "../data/models/products.js";
+import { isValidObjectId } from "mongoose";
 
 export const getCartById = async (req = request, res = response) => {
     try {
         const { cid } = req.params;
+        if (!isValidObjectId(cid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
         const carrito = await cartModel.findById(cid)
         if (carrito)
             return res.json({ carrito });
@@ -30,6 +34,16 @@ export const createCart = async (req = request, res = response) => {
 export const addProductInCart = async (req = request, res = response) => {
     try {
         const { cid, pid } = req.params;
+
+        if (!isValidObjectId(cid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
+
+        if (!isValidObjectId(pid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
+    
+
         const carrito = await cartModel.findById(cid).populate('products.product');
 
         if (!carrito)
@@ -59,6 +73,15 @@ export const addProductInCart = async (req = request, res = response) => {
 export const deleteProductInCart = async (req, res) => {
     try {
         const { cid, pid } = req.params;
+
+        if (!isValidObjectId(cid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
+
+        if (!isValidObjectId(pid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
+    
         const carrito = await cartModel.findById(cid);
 
         if (!carrito) {
@@ -86,6 +109,11 @@ export const deleteProductInCart = async (req, res) => {
 export const deleteAllItemsInCart = async (req = request, res = response) => {
     try {
         const { cid } = req.params;
+
+        if (!isValidObjectId(cid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
+    
         const carrito = await cartModel.findById(cid);
 
         if (!carrito)
@@ -106,6 +134,15 @@ export const updateQuantityProductById = async (req = request, res = response) =
     try {
         const { cid, pid } = req.params;
         const { quantity } = req.body;
+
+        if (!isValidObjectId(cid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
+
+        if (!isValidObjectId(pid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
+    
 
         // Buscar el carrito por su ID
         const carrito = await cartModel.findById(cid).populate("products.product");

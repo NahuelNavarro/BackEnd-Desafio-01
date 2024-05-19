@@ -1,5 +1,6 @@
 import { request, response } from "express";
 import { productModel } from "../data/models/products.js";
+import { isValidObjectId } from "mongoose";
 
 // Obtener lista de productos con paginación, filtrado y ordenamiento
 export const getProducts = async (req = request, res = response) => {
@@ -64,6 +65,12 @@ export const getProducts = async (req = request, res = response) => {
 export const getProductsById = async (req = request, res = response) => {
     try {
         const { pid } = req.params;
+
+        // Validar si pid es un ID de MongoDB válido
+        if (!isValidObjectId(pid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
+
         const producto = await productModel.findById(pid);
         if (!producto)
             return res.status(404).json({ msg: `El producto con ID ${pid} no existe.` });
@@ -95,6 +102,9 @@ export const addProduct = async (req = request, res = response) => {
 export const updateProduct = async (req = request, res = response) => {
     try {
         const { pid } = req.params;
+        if (!isValidObjectId(pid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
         const producto = await productModel.findByIdAndUpdate(pid, req.body, { new: true });
         if (!producto)
             return res.status(404).json({ msg: `No se encontró el producto con el ID ${pid}.` });
@@ -111,6 +121,9 @@ export const updateProduct = async (req = request, res = response) => {
 export const deleteProduct = async (req = request, res = response) => {
     try {
         const { pid } = req.params;
+        if (!isValidObjectId(pid)) {
+            return res.status(400).json({ msg: `El ID proporcionado no es válido.` });
+        }
         const producto = await productModel.findOneAndDelete({ _id: pid });
         if (!producto)
             return res.status(404).json({ msg: `No se encontró el producto con el ID ${pid}.` });
