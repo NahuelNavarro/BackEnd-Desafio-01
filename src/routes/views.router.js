@@ -29,7 +29,8 @@ router.get('/products', async (req, res) => {
     let {docs:productos,totalPages,hasPrevPage,hasNextPage,prevPage,nextPage} = await productManager.getAllPaginate(pagina)
     console.log(productos)
     res.setHeader('Content-Type', 'text/html')
-    res.status(200).render('products',{productos,totalPages,hasPrevPage,hasNextPage,prevPage,nextPage})
+    res.status(200).render('products',{productos,totalPages,hasPrevPage,hasNextPage,prevPage,nextPage,usuario:req.session.usuario
+    })
 })
 
 router.get('/login',(req , res)=>{
