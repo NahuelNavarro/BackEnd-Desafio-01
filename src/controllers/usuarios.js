@@ -99,6 +99,11 @@ export const logOut = async (req = request, res = response) => {
     return res.status(200).json({ payload: "Logout existoso" })
 }
 
+export const error = async (req = request, res = response) => {
+
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(200).json({ payload: "error" })
+}
 
 
 

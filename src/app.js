@@ -11,6 +11,8 @@ import { router as vistasRouter } from './routes/views.router.js';
 import __dirname from './utils.js';
 import session from 'express-session';
 import { router as sessionRouter } from './routes/session.router.js';
+import { initPassport } from './config/passport.config.js';
+import passport from 'passport';
 
 // Crea una instancia de la aplicación Express
 const app = express();
@@ -22,6 +24,10 @@ app.set('views', __dirname + '/views');
 app.use(session({
     secret:"CoderCoder123", resave: true, saveUninitialized: true
 }))
+
+initPassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 // Configura el middleware para procesar datos JSON y formularios
 app.use(express.json());

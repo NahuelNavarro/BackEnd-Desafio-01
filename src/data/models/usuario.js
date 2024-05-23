@@ -12,4 +12,4 @@ export const  usuarioModelo = mongoose.model('usuarios', new mongoose.Schema({
         type: String,
         required: true // La contraseña es obligatoria
     }
-}))
+},{timestamps: true, strict:false}))

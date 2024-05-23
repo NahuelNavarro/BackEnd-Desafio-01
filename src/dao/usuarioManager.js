@@ -10,4 +10,6 @@ export class UsuarioManager {
     async getBy(filtro = {}){
         return await usuarioModelo.findOne(filtro).lean()
     }
+
+    
 }
