@@ -29,7 +29,6 @@ router.get('/github', passport.authenticate("github", {}), (req, res) => { });
 router.get('/callbackGithub', passport.authenticate("github", { failureRedirect: "/api/session/error" }), (req, res) => {
 
     req.session.usuario = req.user;
-    console.log(req.user)
     res.setHeader('Content-Type', 'application/json');
     return res.status(200).json({ payload: "login successful", usuario: req.user });
 

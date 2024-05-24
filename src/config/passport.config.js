@@ -67,36 +67,55 @@ export const initPassport = () => {
         "github",
         new github.Strategy(
             {
-                clientID:"Iv23libxVoqvqDrFUCtq",
-                clientSecret:"b9330741740c058326045043ad1f0c8104ba9bc3",
-                callbackURL:"http://localhost:8080/api/session/callbackGithub",
+                clientID: "Iv23libxVoqvqDrFUCtq",
+                clientSecret: "b9330741740c058326045043ad1f0c8104ba9bc3",
+                callbackURL: "http://localhost:8080/api/session/callbackGithub",
             },
-            
-            async (ta, tr, profile, done) => {
+
+            async (accessToken, refreshToken, profile, done) => {
                 try {
-                    console.log(profile)
-                    let email = profile._json.email
-                    let nombre = profile._json.nombre
+                    // GitHub profile's display name and emails array
+                    let nombre = profile.displayName || profile.username;
+                    let email = null;
 
-                    if(!email){
-                        return done (null, false)
+                    // Attempt to get the primary email from the emails array
+                    if (profile.emails && profile.emails.length > 0) {
+                        email = profile.emails.find((email) => email.primary).value;
                     }
 
-                    let usuario = usuariosManager.getBy({email})
-                    if(!usuario){
-                        usuario = await usuariosManager.create(
-                            {
+                    // If email is still null, fetch the user's emails using the access token
+                    if (!email) {
+                        const response = await fetch('https://api.github.com/user/emails', {
+                            headers: {
+                                Authorization: `token ${accessToken}`
+                            }
+                        });
+                        const emails = await response.json();
+                        const primaryEmailObj = emails.find((emailObj) => emailObj.primary);
+                        if (primaryEmailObj) {
+                            email = primaryEmailObj.email;
+                        }
+                    }
+
+                    console.log(email);
+                    console.log(nombre);
+
+                    if (!email) {
+                        return done(null, false, { message: 'Email not found' });
+                    }
+
+                    let usuario = await usuariosManager.getBy({ email });
+                    if (!usuario) {
+                        usuario = await usuariosManager.create({
                             nombre, email, profile
-                             }
-                         )
+                        });
                     }
-                    return done (null, usuario)
+                    return done(null, usuario);
                 } catch (error) {
-                    return done (error)
+                    return done(error);
                 }
             }
-        )
-    )
+        ))
 
     passport.serializeUser((usuario, done) => {
         return done(null, usuario._id);
