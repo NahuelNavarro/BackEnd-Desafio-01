@@ -2,8 +2,13 @@ import { request, response } from "express";
 import { productModel } from "../data/models/products.js";
 import { isValidObjectId } from "mongoose";
 
+
+
 // Obtener lista de productos con paginación, filtrado y ordenamiento
 export const getProducts = async (req = request, res = response) => {
+
+       
+
     try {
         // Parámetros de consulta
         let { limit = 10, page = 1, query, sort } = req.query;

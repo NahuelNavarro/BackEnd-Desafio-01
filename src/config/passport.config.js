@@ -3,8 +3,13 @@ import local from "passport-local";
 import github from "passport-github2";
 import { UsuarioManager } from "../dao/usuarioManager.js";
 import { generaHash, validaPassword } from "../utils.js";
+import CartManager from "../dao/CartManager.js";
+import { cartModel } from "../data/models/carts.js";
+import { cartManagerMongo } from "../dao/CartMongoManager.js";
 
 const usuariosManager = new UsuarioManager();
+const cartmanager = new cartManagerMongo();
+
 
 export const initPassport = () => {
 
@@ -26,7 +31,9 @@ export const initPassport = () => {
                         return done(null, false, { message: "El usuario ya existe" });
                     }
                     password = generaHash(password);
-                    let usuario = await usuariosManager.create({ nombre, email: username, password });
+                    let nuevoCarrito =  await cartmanager.create()
+                    console.log(nuevoCarrito)
+                    let usuario = await usuariosManager.create({ nombre, email: username, password, carrito: nuevoCarrito._id });
                     return done(null, usuario);
                 } catch (error) {
                     return done(error);

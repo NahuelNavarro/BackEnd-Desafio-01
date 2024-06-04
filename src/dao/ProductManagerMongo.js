@@ -7,6 +7,7 @@ export class ManagerMongo {
     }
 
     async getAllPaginate(page = 1){
-        return await productModel.paginate({},{limit:10, page, lean:true})
+        return await 
+        productModel.paginate({},{limit:10, page, lean:true})
     }
 }

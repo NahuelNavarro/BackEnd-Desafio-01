@@ -8,8 +8,14 @@ export const  usuarioModelo = mongoose.model('usuarios', new mongoose.Schema({
     email: {
         type: String
     },
+    rol:{
+        type: String, default:"user"
+    },
     password: {
         type: String,
         required: true // La contraseña es obligatoria
+    },
+    carrito:{
+        type: mongoose.Types.ObjectId, ref:"Cart"
     }
 },{timestamps: true, strict:false}))
