@@ -31,7 +31,7 @@ export const initPassport = () => {
                         return done(null, false, { message: "El usuario ya existe" });
                     }
                     password = generaHash(password);
-                    let nuevoCarrito =  await cartmanager.create()
+                    let nuevoCarrito = await cartmanager.create()
                     console.log(nuevoCarrito)
                     let usuario = await usuariosManager.create({ nombre, email: username, password, carrito: nuevoCarrito._id });
                     return done(null, usuario);

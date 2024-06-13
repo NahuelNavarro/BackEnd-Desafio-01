@@ -13,7 +13,10 @@ import session from 'express-session';
 import { router as sessionRouter } from './routes/session.router.js';
 import { initPassport } from './config/passport.config.js';
 import passport from 'passport';
+import { config } from './config/config.js';
+import fs from "fs"
 
+const PORT = config.PORT;
 // Crea una instancia de la aplicación Express
 const app = express();
 
@@ -22,7 +25,7 @@ app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', __dirname + '/views');
 app.use(session({
-    secret:"CoderCoder123", resave: true, saveUninitialized: true
+    secret:config.SECRET, resave: true, saveUninitialized: true
 }))
 
 initPassport()
@@ -51,9 +54,9 @@ app.use("/api/carts", cartsRouter);
 await dbConnection();
 
 // Inicia el servidor Express en el puerto 8080
-const expressServer = app.listen(8080, () => {
+const expressServer = app.listen( PORT , () => {
     console.log("Servidor 8080 iniciado");
-});
+}); 
 
 // Inicializa Socket.io en el servidor Express
 const io = new Server(expressServer);
